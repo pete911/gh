@@ -16,13 +16,14 @@ var (
 	}
 	cloneUserCmd = &cobra.Command{
 		Use:   "user",
-		Short: "clone user github repositories",
+		Short: "clone all user's github repositories",
 		Args:  cobra.ExactArgs(1),
 		RunE:  cloneUserCmdRunE,
 	}
 )
 
 func init() {
+
 	cloneCmd.PersistentFlags().StringVarP(&outputFlag, outputFlagName, "o", getPwd(), "git clone destination directory")
 	cloneCmd.AddCommand(cloneUserCmd)
 }
@@ -31,5 +32,5 @@ func cloneUserCmdRunE(cmd *cobra.Command, args []string) error {
 
 	user := args[0]
 	destination := cmd.Flag(outputFlagName).Value.String()
-	return gh.CloneUserRepos(ghClient, user, destination)
+	return gh.CloneRepositories(ghClient, user, destination)
 }

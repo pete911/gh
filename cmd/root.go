@@ -12,6 +12,8 @@ var (
 )
 
 func init() {
+
 	RootCmd.AddCommand(versionCmd)
 	RootCmd.AddCommand(cloneCmd)
+	RootCmd.AddCommand(listCmd)
 }
