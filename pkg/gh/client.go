@@ -12,6 +12,7 @@ const timeout = 10 * time.Second
 
 type Client struct {
 	HasToken bool
+	token    string
 	ghClient *github.Client
 	ctx      context.Context
 }
@@ -35,6 +36,7 @@ func NewClientWithToken(token string) Client {
 
 	return Client{
 		HasToken: true,
+		token:    token,
 		ghClient: github.NewClient(tc),
 		ctx:      ctx,
 	}

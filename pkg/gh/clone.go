@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"os"
 	"path/filepath"
 )
@@ -19,7 +20,7 @@ func (c Client) CloneOrgRepositories(org, destination string) error {
 	for _, repository := range repositories {
 		repositoryDestination := filepath.Join(destination, repository.Name)
 		fmt.Printf("cloning %s to %s\n", repository.CloneURL, repositoryDestination)
-		if err := gitClone(repositoryDestination, repository.CloneURL); err != nil {
+		if err := c.gitClone(repositoryDestination, repository.CloneURL); err != nil {
 			return err
 		}
 	}
@@ -37,17 +38,23 @@ func (c Client) CloneUserRepositories(user, destination string) error {
 	for _, repository := range repositories {
 		repositoryDestination := filepath.Join(destination, repository.Name)
 		fmt.Printf("cloning %s to %s\n", repository.CloneURL, repositoryDestination)
-		if err := gitClone(repositoryDestination, repository.CloneURL); err != nil {
+		if err := c.gitClone(repositoryDestination, repository.CloneURL); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func gitClone(destination, url string) error {
+func (c Client) gitClone(destination, url string) error {
+
+	var auth *http.BasicAuth
+	if c.HasToken {
+		auth = &http.BasicAuth{Username: "gh", Password: c.token}
+	}
 
 	_, err := git.PlainClone(destination, false, &git.CloneOptions{
 		URL:      url,
+		Auth:     auth,
 		Progress: os.Stdout,
 	})
 
