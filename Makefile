@@ -11,9 +11,9 @@ build: test
 	go vet ./...
 	go mod tidy
 	go mod vendor
-	go build -ldflags "-X 'github.com/pete911/gh/cmd.Version=${VERSION}'" -mod vendor
+	go build -ldflags "-X 'github.com/pete911/gh/cmd.Version=${VERSION}'"
 .PHONY:build
 
 install: test
-	go install -ldflags "-X 'github.com/pete911/gh/cmd.Version=${VERSION}'" -mod vendor
+	go install -ldflags "-X 'github.com/pete911/gh/cmd.Version=${VERSION}'"
 .PHONY:install
