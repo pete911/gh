@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pete911/gh/pkg/gh"
 	"github.com/spf13/cobra"
+	"os"
+	"text/tabwriter"
 )
 
 var (
@@ -36,9 +39,7 @@ func listOrgReposCmdRunE(_ *cobra.Command, args []string) error {
 		return err
 	}
 
-	for _, repository := range repositories {
-		fmt.Println(repository.Name)
-	}
+	printList(repositories)
 	return nil
 }
 
@@ -54,8 +55,17 @@ func listUserReposCmdRunE(_ *cobra.Command, args []string) error {
 		return err
 	}
 
-	for _, repository := range repositories {
-		fmt.Println(repository.Name)
-	}
+	printList(repositories)
 	return nil
+}
+
+func printList(repositories []gh.Repository) {
+
+	w := tabwriter.NewWriter(os.Stdout, 1, 1, 1, ' ', 0)
+	fmt.Fprintln(w, "Name\tVisibility\tSize\tLanguage\tIssues\tStars\tTopics")
+	for _, r := range repositories {
+		fmt.Fprintf(w, "%s\t%s\t%d\t%s\t%d\t%d\t%v\n",
+			r.Name, r.Visibility, r.Size, r.Language, r.OpenIssuesCount, r.StargazersCount, r.Topics)
+	}
+	w.Flush()
 }

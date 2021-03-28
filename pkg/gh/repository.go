@@ -6,8 +6,14 @@ import (
 )
 
 type Repository struct {
-	Name     string
-	CloneURL string
+	Name            string
+	CloneURL        string
+	Visibility      string
+	Size            int
+	Language        string
+	OpenIssuesCount int
+	StargazersCount int
+	Topics          []string
 }
 
 func (c Client) ListRepositoriesByOrg(org string) ([]Repository, error) {
@@ -19,7 +25,7 @@ func (c Client) ListRepositoriesByOrg(org string) ([]Repository, error) {
 	}
 
 	for _, ghRepository := range ghRepositories {
-		out = append(out, Repository{Name: *ghRepository.Name, CloneURL: *ghRepository.CloneURL})
+		out = append(out, toRepository(ghRepository))
 	}
 	return out, nil
 }
@@ -35,7 +41,7 @@ func (c Client) ListRepositories(user string) ([]Repository, error) {
 	}
 
 	for _, ghRepository := range ghRepositories {
-		out = append(out, Repository{Name: *ghRepository.Name, CloneURL: *ghRepository.CloneURL})
+		out = append(out, toRepository(ghRepository))
 	}
 	return out, nil
 }
@@ -80,4 +86,34 @@ func (c Client) listRepositories(user string) ([]*github.Repository, error) {
 		opt.Page = resp.NextPage
 	}
 	return repositories, nil
+}
+
+func toRepository(ghRepository *github.Repository) Repository {
+
+	return Repository{
+		Name:            toString(ghRepository.Name),
+		CloneURL:        toString(ghRepository.CloneURL),
+		Visibility:      toString(ghRepository.Visibility),
+		Size:            toInt(ghRepository.Size),
+		Language:        toString(ghRepository.Language),
+		OpenIssuesCount: toInt(ghRepository.OpenIssuesCount),
+		StargazersCount: toInt(ghRepository.StargazersCount),
+		Topics:          ghRepository.Topics,
+	}
+}
+
+func toString(s *string) string {
+
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func toInt(i *int) int {
+
+	if i == nil {
+		return 0
+	}
+	return *i
 }
