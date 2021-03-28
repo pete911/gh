@@ -2,17 +2,24 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/google/go-github/v34/github"
-	"net/http"
+	"github.com/pete911/gh/pkg/gh"
 	"os"
-	"time"
 )
 
-const defaultPwd = "/tmp/gh"
+const (
+	defaultPwd     = "/tmp/gh"
+	githubTokenEnv = "GITHUB_TOKEN"
+)
 
-var ghClient = github.NewClient(&http.Client{Timeout: 10 * time.Second})
+func GetGhClient() gh.Client {
 
-func getPwd() string {
+	if token := GetStringEnv(githubTokenEnv, ""); token != "" {
+		return gh.NewClientWithToken(token)
+	}
+	return gh.NewClient()
+}
+
+func GetPwd() string {
 
 	pwd, err := os.Getwd()
 	if err != nil {
@@ -21,4 +28,13 @@ func getPwd() string {
 		return defaultPwd
 	}
 	return pwd
+}
+
+// returns specified env var if it exists, otherwise specified default val is returned
+func GetStringEnv(key, val string) string {
+
+	if out, ok := os.LookupEnv(key); ok {
+		return out
+	}
+	return val
 }

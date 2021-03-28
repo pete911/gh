@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/pete911/gh/pkg/gh"
 	"github.com/spf13/cobra"
 )
 
@@ -14,23 +13,40 @@ var (
 		Use:   "clone",
 		Short: "clone github repositories",
 	}
-	cloneUserCmd = &cobra.Command{
-		Use:   "user",
-		Short: "clone all user's github repositories",
+	cloneOrgReposCmd = &cobra.Command{
+		Use:   "org-repos",
+		Short: "clone all org github repositories",
 		Args:  cobra.ExactArgs(1),
-		RunE:  cloneUserCmdRunE,
+		RunE:  cloneOrgReposCmdRunE,
+	}
+	cloneUserReposCmd = &cobra.Command{
+		Use:   "user-repos",
+		Short: "clone all user github repositories",
+		RunE:  cloneUserReposCmdRunE,
 	}
 )
 
 func init() {
 
-	cloneCmd.PersistentFlags().StringVarP(&outputFlag, outputFlagName, "o", getPwd(), "git clone destination directory")
-	cloneCmd.AddCommand(cloneUserCmd)
+	cloneCmd.PersistentFlags().StringVarP(&outputFlag, outputFlagName, "o", GetPwd(), "git clone destination directory")
+	cloneCmd.AddCommand(cloneOrgReposCmd)
+	cloneCmd.AddCommand(cloneUserReposCmd)
 }
 
-func cloneUserCmdRunE(cmd *cobra.Command, args []string) error {
+func cloneOrgReposCmdRunE(cmd *cobra.Command, args []string) error {
 
-	user := args[0]
+	org := args[0]
 	destination := cmd.Flag(outputFlagName).Value.String()
-	return gh.CloneRepositories(ghClient, user, destination)
+	return GetGhClient().CloneOrgRepositories(org, destination)
+}
+
+func cloneUserReposCmdRunE(cmd *cobra.Command, args []string) error {
+
+	var user string
+	if len(args) > 0 {
+		user = args[0]
+	}
+
+	destination := cmd.Flag(outputFlagName).Value.String()
+	return GetGhClient().CloneUserRepositories(user, destination)
 }

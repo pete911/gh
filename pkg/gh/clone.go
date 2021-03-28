@@ -4,16 +4,33 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-git/go-git/v5"
-	"github.com/google/go-github/v34/github"
 	"os"
 	"path/filepath"
 )
 
-func CloneRepositories(c *github.Client, user, destination string) error {
+func (c Client) CloneOrgRepositories(org, destination string) error {
 
-	repositories, err := ListRepositories(c, user)
+	repositories, err := c.ListRepositoriesByOrg(org)
 	if err != nil {
-		return fmt.Errorf("clone repos: %w", err)
+		return fmt.Errorf("clone org repos: %w", err)
+	}
+
+	fmt.Printf("got %d repositories\n", len(repositories))
+	for _, repository := range repositories {
+		repositoryDestination := filepath.Join(destination, repository.Name)
+		fmt.Printf("cloning %s to %s\n", repository.CloneURL, repositoryDestination)
+		if err := gitClone(repositoryDestination, repository.CloneURL); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (c Client) CloneUserRepositories(user, destination string) error {
+
+	repositories, err := c.ListRepositories(user)
+	if err != nil {
+		return fmt.Errorf("clone user repos: %w", err)
 	}
 
 	fmt.Printf("got %d repositories\n", len(repositories))

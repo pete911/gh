@@ -1,7 +1,6 @@
 package gh
 
 import (
-	"context"
 	"fmt"
 	"github.com/google/go-github/v34/github"
 )
@@ -11,10 +10,10 @@ type Repository struct {
 	CloneURL string
 }
 
-func ListRepositories(c *github.Client, user string) ([]Repository, error) {
+func (c Client) ListRepositoriesByOrg(org string) ([]Repository, error) {
 
 	var out []Repository
-	ghRepositories, err := listRepositories(c, user, 1)
+	ghRepositories, err := c.listRepositoriesByOrg(org)
 	if err != nil {
 		return nil, err
 	}
@@ -25,23 +24,58 @@ func ListRepositories(c *github.Client, user string) ([]Repository, error) {
 	return out, nil
 }
 
-func listRepositories(c *github.Client, user string, page int) ([]*github.Repository, error) {
+// list public repositories for a user, if user is not specified, all repositories owned by authenticated
+// user are listed
+func (c Client) ListRepositories(user string) ([]Repository, error) {
 
-	repositories, response, err := c.Repositories.List(context.Background(), user, &github.RepositoryListOptions{
-		Visibility:  "public",
-		Affiliation: "owner",
-		ListOptions: github.ListOptions{Page: page, PerPage: 100},
-	})
+	var out []Repository
+	ghRepositories, err := c.listRepositories(user)
 	if err != nil {
-		return nil, fmt.Errorf("list repositories page %d: %w", page, err)
+		return nil, err
 	}
 
-	if response.NextPage != 0 {
-		r, err := listRepositories(c, user, response.NextPage)
+	for _, ghRepository := range ghRepositories {
+		out = append(out, Repository{Name: *ghRepository.Name, CloneURL: *ghRepository.CloneURL})
+	}
+	return out, nil
+}
+
+func (c Client) listRepositoriesByOrg(org string) ([]*github.Repository, error) {
+
+	opt := &github.RepositoryListByOrgOptions{}
+
+	var repositories []*github.Repository
+	for {
+		repos, resp, err := c.ghClient.Repositories.ListByOrg(c.ctx, org, opt)
 		if err != nil {
-			return nil, fmt.Errorf("list repositories page %d: %w", response.NextPage, err)
+			return nil, fmt.Errorf("list repositories by org page %d: %w", opt.Page, err)
 		}
-		repositories = append(repositories, r...)
+		repositories = append(repositories, repos...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+	return repositories, nil
+}
+
+func (c Client) listRepositories(user string) ([]*github.Repository, error) {
+
+	opt := &github.RepositoryListOptions{
+		Affiliation: "owner",
+	}
+
+	var repositories []*github.Repository
+	for {
+		repos, resp, err := c.ghClient.Repositories.List(c.ctx, user, opt)
+		if err != nil {
+			return nil, fmt.Errorf("list repositories page %d: %w", opt.Page, err)
+		}
+		repositories = append(repositories, repos...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
 	return repositories, nil
 }
