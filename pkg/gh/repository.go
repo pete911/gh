@@ -42,7 +42,9 @@ func (c Client) ListRepositories(user string) ([]Repository, error) {
 
 func (c Client) listRepositoriesByOrg(org string) ([]*github.Repository, error) {
 
-	opt := &github.RepositoryListByOrgOptions{}
+	opt := &github.RepositoryListByOrgOptions{
+		Type: "sources",
+	}
 
 	var repositories []*github.Repository
 	for {
