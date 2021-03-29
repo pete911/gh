@@ -28,10 +28,14 @@ gh clone user-repos [user]
 ```shell
 # lists repositories for specified org, if GITHUB_TOKEN env. variable is exported, private
 # repositories are listed as well
+# flags:
+#   --sort-by string   sort output by visibility, size, language, issues or stars
 gh list org-repos <org>
 
 # lists repositories for specified user, either user has to be specified (all public
 # repositories are listed) or GITHUB_TOKEN env. variable has to be exported (all
 # repositories owned by the user are listed)
+# flags:
+#   --sort-by string   sort output by visibility, size, language, issues or stars
 gh list user-repos [user]
 ```

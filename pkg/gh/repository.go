@@ -3,7 +3,33 @@ package gh
 import (
 	"fmt"
 	"github.com/google/go-github/v34/github"
+	"sort"
+	"strings"
 )
+
+type Repositories []Repository
+
+// sort repositories by visibility, size, language, issues or stars
+func (r Repositories) SortBy(field string) {
+
+	// sort numeric values by highest first
+	sort.Slice(r, func(i, j int) bool {
+		switch strings.ToLower(field) {
+		case "visibility":
+			return r[i].Visibility < r[j].Visibility
+		case "size":
+			return r[i].Size > r[j].Size
+		case "language":
+			return r[i].Language < r[j].Language
+		case "issues":
+			return r[i].OpenIssuesCount > r[j].OpenIssuesCount
+		case "stars":
+			return r[i].StargazersCount > r[j].StargazersCount
+		default:
+			return r[i].Name < r[j].Name
+		}
+	})
+}
 
 type Repository struct {
 	Name            string
@@ -16,7 +42,7 @@ type Repository struct {
 	Topics          []string
 }
 
-func (c Client) ListRepositoriesByOrg(org string) ([]Repository, error) {
+func (c Client) ListRepositoriesByOrg(org string) (Repositories, error) {
 
 	var out []Repository
 	ghRepositories, err := c.listRepositoriesByOrg(org)
@@ -32,7 +58,7 @@ func (c Client) ListRepositoriesByOrg(org string) ([]Repository, error) {
 
 // list public repositories for a user, if user is not specified, all repositories owned by authenticated
 // user are listed
-func (c Client) ListRepositories(user string) ([]Repository, error) {
+func (c Client) ListRepositories(user string) (Repositories, error) {
 
 	var out []Repository
 	ghRepositories, err := c.listRepositories(user)

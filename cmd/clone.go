@@ -4,8 +4,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const outputFlagName = "output"
-
 var (
 	outputFlag string
 
@@ -28,25 +26,22 @@ var (
 
 func init() {
 
-	cloneCmd.PersistentFlags().StringVarP(&outputFlag, outputFlagName, "o", GetPwd(), "git clone destination directory")
+	cloneCmd.PersistentFlags().StringVarP(&outputFlag, "output", "o", GetPwd(), "git clone destination directory")
 	cloneCmd.AddCommand(cloneOrgReposCmd)
 	cloneCmd.AddCommand(cloneUserReposCmd)
 }
 
-func cloneOrgReposCmdRunE(cmd *cobra.Command, args []string) error {
+func cloneOrgReposCmdRunE(_ *cobra.Command, args []string) error {
 
 	org := args[0]
-	destination := cmd.Flag(outputFlagName).Value.String()
-	return GetGhClient().CloneOrgRepositories(org, destination)
+	return GetGhClient().CloneOrgRepositories(org, outputFlag)
 }
 
-func cloneUserReposCmdRunE(cmd *cobra.Command, args []string) error {
+func cloneUserReposCmdRunE(_ *cobra.Command, args []string) error {
 
 	var user string
 	if len(args) > 0 {
 		user = args[0]
 	}
-
-	destination := cmd.Flag(outputFlagName).Value.String()
-	return GetGhClient().CloneUserRepositories(user, destination)
+	return GetGhClient().CloneUserRepositories(user, outputFlag)
 }

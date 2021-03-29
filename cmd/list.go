@@ -9,6 +9,8 @@ import (
 )
 
 var (
+	sortByFlag string
+
 	listCmd = &cobra.Command{
 		Use:   "list",
 		Short: "list github repositories",
@@ -27,6 +29,8 @@ var (
 )
 
 func init() {
+
+	listCmd.PersistentFlags().StringVar(&sortByFlag, "sort-by", "", "sort output by visibility, size, language, issues or stars")
 	listCmd.AddCommand(listOrgReposCmd)
 	listCmd.AddCommand(listUserReposCmd)
 }
@@ -37,6 +41,10 @@ func listOrgReposCmdRunE(_ *cobra.Command, args []string) error {
 	repositories, err := GetGhClient().ListRepositoriesByOrg(org)
 	if err != nil {
 		return err
+	}
+
+	if sortByFlag != "" {
+		repositories.SortBy(sortByFlag)
 	}
 
 	printList(repositories)
@@ -53,6 +61,10 @@ func listUserReposCmdRunE(_ *cobra.Command, args []string) error {
 	repositories, err := GetGhClient().ListRepositories(user)
 	if err != nil {
 		return err
+	}
+
+	if sortByFlag != "" {
+		repositories.SortBy(sortByFlag)
 	}
 
 	printList(repositories)
