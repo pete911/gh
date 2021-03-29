@@ -6,6 +6,12 @@ GitHub tools
 - install [go](https://golang.org/doc/install)
 - run `make install`
 
+## setup
+
+Project works with public repositories out of the box. To be able to use it with private repositories, create
+[personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
+on github and export it under `GITHUB_TOKEN` env. variable.
+
 ### clone all repositories
 
 ```shell
