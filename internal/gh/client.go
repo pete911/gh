@@ -2,26 +2,38 @@ package gh
 
 import (
 	"context"
+	"github.com/go-git/go-git/v5"
 	"github.com/google/go-github/v34/github"
 	"golang.org/x/oauth2"
-	"net/http"
 	"time"
 )
 
 const timeout = 10 * time.Second
 
-type Client struct {
-	HasToken bool
-	token    string
-	ghClient *github.Client
-	ctx      context.Context
+type GitCloner interface {
+	PlainClone(path string, isBare bool, o *git.CloneOptions) (*git.Repository, error)
 }
 
-func NewClient() Client {
+type GitPlainClone func(path string, isBare bool, o *git.CloneOptions) (*git.Repository, error)
+
+func (g GitPlainClone) PlainClone(path string, isBare bool, o *git.CloneOptions) (*git.Repository, error) {
+	return g(path, isBare, o)
+}
+
+type Client struct {
+	HasToken  bool
+	token     string
+	ghClient  *github.Client
+	gitClient GitCloner
+	ctx       context.Context
+}
+
+func NewClient(ghClient *github.Client, gitClient GitCloner) Client {
 
 	return Client{
-		ghClient: github.NewClient(&http.Client{Timeout: timeout}),
-		ctx:      context.Background(),
+		ghClient:  ghClient,
+		gitClient: gitClient,
+		ctx:       context.Background(),
 	}
 }
 

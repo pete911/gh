@@ -33,30 +33,34 @@ func (c Client) gitCloneRepositories(repositories Repositories, destination stri
 	log.Info().Msgf("got %d repositories", len(repositories))
 	for _, repository := range repositories {
 		repositoryDestination := filepath.Join(destination, repository.Name)
-		if err := c.gitCloneRepository(repositoryDestination, repository.CloneURL); err != nil {
+		if err := c.gitCloneRepository(repository.CloneURL, repositoryDestination); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (c Client) gitCloneRepository(destination, url string) error {
+func (c Client) gitCloneRepository(url, destination string) error {
 
 	var auth *http.BasicAuth
 	if c.HasToken {
 		auth = &http.BasicAuth{Username: "gh", Password: c.token}
 	}
 
-	_, err := git.PlainClone(destination, false, &git.CloneOptions{
+	_, err := c.gitClient.PlainClone(destination, false, &git.CloneOptions{
 		URL:      url,
 		Auth:     auth,
 		Progress: os.Stdout,
 	})
 
-	if errors.Is(err, git.ErrRepositoryAlreadyExists) {
-		log.Warn().Msgf("git clone: repository %s already exists in %s", url, destination)
-		return nil
+	if err != nil {
+		if errors.Is(err, git.ErrRepositoryAlreadyExists) {
+			log.Warn().Msgf("git clone: repository %s already exists in %s", url, destination)
+			return nil
+		}
+		return err
 	}
+
 	log.Info().Msgf("cloned %s to %s", url, destination)
-	return err
+	return nil
 }

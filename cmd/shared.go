@@ -1,14 +1,19 @@
 package cmd
 
 import (
+	"github.com/go-git/go-git/v5"
+	"github.com/google/go-github/v34/github"
 	"github.com/pete911/gh/internal/gh"
 	"github.com/rs/zerolog/log"
+	"net/http"
 	"os"
+	"time"
 )
 
 const (
 	defaultPwd     = "/tmp/gh"
 	githubTokenEnv = "GITHUB_TOKEN"
+	ghTimeout      = 10 * time.Second
 )
 
 func GetGhClient() gh.Client {
@@ -16,7 +21,8 @@ func GetGhClient() gh.Client {
 	if token := GetStringEnv(githubTokenEnv, ""); token != "" {
 		return gh.NewClientWithToken(token)
 	}
-	return gh.NewClient()
+	ghClient := github.NewClient(&http.Client{Timeout: ghTimeout})
+	return gh.NewClient(ghClient, gh.GitPlainClone(git.PlainClone))
 }
 
 func GetPwd() string {
