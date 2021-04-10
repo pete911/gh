@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
+	"github.com/rs/zerolog/log"
 	"os"
 	"path/filepath"
 )
@@ -15,16 +16,7 @@ func (c Client) CloneOrgRepositories(org, destination string) error {
 	if err != nil {
 		return fmt.Errorf("clone org repos: %w", err)
 	}
-
-	fmt.Printf("got %d repositories\n", len(repositories))
-	for _, repository := range repositories {
-		repositoryDestination := filepath.Join(destination, repository.Name)
-		fmt.Printf("cloning %s to %s\n", repository.CloneURL, repositoryDestination)
-		if err := c.gitClone(repositoryDestination, repository.CloneURL); err != nil {
-			return err
-		}
-	}
-	return nil
+	return c.gitCloneRepositories(repositories, destination)
 }
 
 func (c Client) CloneUserRepositories(user, destination string) error {
@@ -33,19 +25,22 @@ func (c Client) CloneUserRepositories(user, destination string) error {
 	if err != nil {
 		return fmt.Errorf("clone user repos: %w", err)
 	}
+	return c.gitCloneRepositories(repositories, destination)
+}
 
-	fmt.Printf("got %d repositories\n", len(repositories))
+func (c Client) gitCloneRepositories(repositories Repositories, destination string) error {
+
+	log.Info().Msgf("got %d repositories", len(repositories))
 	for _, repository := range repositories {
 		repositoryDestination := filepath.Join(destination, repository.Name)
-		fmt.Printf("cloning %s to %s\n", repository.CloneURL, repositoryDestination)
-		if err := c.gitClone(repositoryDestination, repository.CloneURL); err != nil {
+		if err := c.gitCloneRepository(repositoryDestination, repository.CloneURL); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (c Client) gitClone(destination, url string) error {
+func (c Client) gitCloneRepository(destination, url string) error {
 
 	var auth *http.BasicAuth
 	if c.HasToken {
@@ -59,8 +54,9 @@ func (c Client) gitClone(destination, url string) error {
 	})
 
 	if errors.Is(err, git.ErrRepositoryAlreadyExists) {
-		fmt.Printf("git clone: repository %s already exists in %s\n", url, destination)
+		log.Warn().Msgf("git clone: repository %s already exists in %s", url, destination)
 		return nil
 	}
+	log.Info().Msgf("cloned %s to %s", url, destination)
 	return err
 }

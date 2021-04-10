@@ -1,15 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"github.com/pete911/gh/cmd"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"os"
 )
+
+func init() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+}
 
 func main() {
 
 	if err := cmd.RootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		log.Fatal().Err(err)
 	}
 }

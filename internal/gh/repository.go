@@ -9,7 +9,7 @@ import (
 
 type Repositories []Repository
 
-// sort repositories by visibility, size, language, issues or stars
+// SortBy sorts repositories by visibility, size, language, issues or stars
 func (r Repositories) SortBy(field string) {
 
 	// sort numeric values by highest first
@@ -40,6 +40,7 @@ type Repository struct {
 	OpenIssuesCount int
 	StargazersCount int
 	Topics          []string
+	Fork            bool
 }
 
 func (c Client) ListRepositoriesByOrg(org string) (Repositories, error) {
@@ -56,8 +57,8 @@ func (c Client) ListRepositoriesByOrg(org string) (Repositories, error) {
 	return out, nil
 }
 
-// list public repositories for a user, if user is not specified, all repositories owned by authenticated
-// user are listed
+// ListRepositories lists public repositories for a user, if user is not specified, all repositories owned
+// by authenticated user are listed
 func (c Client) ListRepositories(user string) (Repositories, error) {
 
 	var out []Repository
@@ -125,6 +126,7 @@ func toRepository(ghRepository *github.Repository) Repository {
 		OpenIssuesCount: toInt(ghRepository.OpenIssuesCount),
 		StargazersCount: toInt(ghRepository.StargazersCount),
 		Topics:          ghRepository.Topics,
+		Fork:            toBool(ghRepository.Fork),
 	}
 }
 
@@ -142,4 +144,12 @@ func toInt(i *int) int {
 		return 0
 	}
 	return *i
+}
+
+func toBool(b *bool) bool {
+
+	if b == nil {
+		return false
+	}
+	return *b
 }

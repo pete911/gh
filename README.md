@@ -35,6 +35,7 @@ gh clone user-repos [user]
 # lists repositories for specified org, if GITHUB_TOKEN env. variable is exported, private
 # repositories are listed as well
 # flags:
+#   --no-forks         exclude forked repositories in the list
 #   --sort-by string   sort output by visibility, size, language, issues or stars
 gh list org-repos <org>
 
@@ -42,6 +43,7 @@ gh list org-repos <org>
 # repositories are listed) or GITHUB_TOKEN env. variable has to be exported (all
 # repositories owned by the user are listed)
 # flags:
+#   --no-forks         exclude forked repositories in the list
 #   --sort-by string   sort output by visibility, size, language, issues or stars
 gh list user-repos [user]
 ```

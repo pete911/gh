@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/pete911/gh/pkg/gh"
+	"github.com/pete911/gh/internal/gh"
+	"github.com/rs/zerolog/log"
 	"os"
 )
 
@@ -23,14 +23,13 @@ func GetPwd() string {
 
 	pwd, err := os.Getwd()
 	if err != nil {
-		fmt.Printf("cannot get working directory: %v\n", err)
-		fmt.Printf("setting pwd to %s\n", defaultPwd)
+		log.Warn().Err(err).Msgf("cannot get pwd, setting pwd to %s", defaultPwd)
 		return defaultPwd
 	}
 	return pwd
 }
 
-// returns specified env var if it exists, otherwise specified default val is returned
+// GetStringEnv returns specified env var if it exists, otherwise specified default val is returned
 func GetStringEnv(key, val string) string {
 
 	if out, ok := os.LookupEnv(key); ok {
