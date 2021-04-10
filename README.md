@@ -29,6 +29,19 @@ gh clone org-repos <org>
 gh clone user-repos [user]
 ```
 
+#### example
+
+```shell
+$ gh clone org-repos ori-edge
+1:00PM INF got 2 repositories
+Enumerating objects: 10, done.
+Counting objects: 100% (10/10), done.
+Compressing objects: 100% (9/9), done.
+Total 10 (delta 1), reused 6 (delta 0), pack-reused 0
+1:00PM INF cloned https://github.com/ori-edge/all-in-one-opennebula.git to /tmp/github.com/all-in-one-opennebula
+1:00PM WRN git clone: repository https://github.com/ori-edge/k8s_gateway.git already exists in /tmp/github.com/k8s_gateway
+```
+
 ### list all repositories
 
 ```shell
@@ -46,4 +59,17 @@ gh list org-repos <org>
 #   --no-forks         exclude forked repositories in the list
 #   --sort-by string   sort output by visibility, size, language, issues or stars
 gh list user-repos [user]
+```
+
+#### example
+
+```shell
+$ gh list user-repos kiich
+Name                      Visibility Size  Language Issues Stars Topics Fork
+ansible-recipes           public     21    Python   0      0     []     true
+flux-get-started          public     79    Smarty   0      0     []     true
+helm                      public     4908  Go       0      0     []     true
+helm-operator-get-started public     544            0      0     []     true
+kube-aws                  public     36151 Go       0      0     []     true
+logrotate                 public     60    Shell    0      0     []     true
 ```
