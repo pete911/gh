@@ -5,6 +5,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/google/go-github/v34/github"
 	"golang.org/x/oauth2"
+	"net/http"
 	"time"
 )
 
@@ -28,10 +29,10 @@ type Client struct {
 	ctx       context.Context
 }
 
-func NewClient(ghClient *github.Client, gitClient GitCloner) Client {
+func NewClient(gitClient GitCloner) Client {
 
 	return Client{
-		ghClient:  ghClient,
+		ghClient:  github.NewClient(&http.Client{Timeout: timeout}),
 		gitClient: gitClient,
 		ctx:       context.Background(),
 	}
@@ -46,8 +47,11 @@ func NewClientWithToken(token string, gitClient GitCloner) Client {
 	tc := oauth2.NewClient(ctx, ts)
 	tc.Timeout = timeout
 
-	client := NewClient(github.NewClient(tc), gitClient)
-	client.HasToken = true
-	client.token = token
-	return client
+	return Client{
+		HasToken:  true,
+		token:     token,
+		ghClient:  github.NewClient(tc),
+		gitClient: gitClient,
+		ctx:       ctx,
+	}
 }

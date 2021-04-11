@@ -2,14 +2,12 @@ package gh
 
 import (
 	"fmt"
-	"github.com/google/go-github/v34/github"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
-	"time"
 )
 
 func TestClient_ListRepositoriesByOrg(t *testing.T) {
@@ -28,9 +26,8 @@ func TestClient_ListRepositoriesByOrg(t *testing.T) {
 		defer server.Close()
 
 		baseUrl, _ := url.Parse(fmt.Sprintf("%s/", server.URL))
-		ghClient := github.NewClient(&http.Client{Timeout: 2 * time.Second})
-		ghClient.BaseURL = baseUrl
-		client := NewClient(ghClient, nil)
+		client := NewClient(nil)
+		client.ghClient.BaseURL = baseUrl
 
 		repositories, err := client.ListRepositoriesByOrg("octocat")
 		require.NoError(t, err)
@@ -49,9 +46,8 @@ func TestClient_ListRepositoriesByOrg(t *testing.T) {
 		defer server.Close()
 
 		baseUrl, _ := url.Parse(fmt.Sprintf("%s/", server.URL))
-		ghClient := github.NewClient(&http.Client{Timeout: 2 * time.Second})
-		ghClient.BaseURL = baseUrl
-		client := NewClient(ghClient, nil)
+		client := NewClient(nil)
+		client.ghClient.BaseURL = baseUrl
 
 		_, err := client.ListRepositoriesByOrg("octocat")
 		require.Error(t, err)
@@ -74,9 +70,8 @@ func TestClient_ListRepositories(t *testing.T) {
 		defer server.Close()
 
 		baseUrl, _ := url.Parse(fmt.Sprintf("%s/", server.URL))
-		ghClient := github.NewClient(&http.Client{Timeout: 2 * time.Second})
-		ghClient.BaseURL = baseUrl
-		client := NewClient(ghClient, nil)
+		client := NewClient(nil)
+		client.ghClient.BaseURL = baseUrl
 
 		repositories, err := client.ListRepositories("octocat")
 		require.NoError(t, err)
@@ -95,9 +90,8 @@ func TestClient_ListRepositories(t *testing.T) {
 		defer server.Close()
 
 		baseUrl, _ := url.Parse(fmt.Sprintf("%s/", server.URL))
-		ghClient := github.NewClient(&http.Client{Timeout: 2 * time.Second})
-		ghClient.BaseURL = baseUrl
-		client := NewClient(ghClient, nil)
+		client := NewClient(nil)
+		client.ghClient.BaseURL = baseUrl
 
 		_, err := client.ListRepositories("octocat")
 		require.Error(t, err)
