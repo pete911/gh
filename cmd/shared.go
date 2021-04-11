@@ -19,7 +19,7 @@ const (
 func GetGhClient() gh.Client {
 
 	if token := GetStringEnv(githubTokenEnv, ""); token != "" {
-		return gh.NewClientWithToken(token)
+		return gh.NewClientWithToken(token, gh.GitPlainClone(git.PlainClone))
 	}
 	ghClient := github.NewClient(&http.Client{Timeout: ghTimeout})
 	return gh.NewClient(ghClient, gh.GitPlainClone(git.PlainClone))

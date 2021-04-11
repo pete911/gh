@@ -38,8 +38,8 @@ Enumerating objects: 10, done.
 Counting objects: 100% (10/10), done.
 Compressing objects: 100% (9/9), done.
 Total 10 (delta 1), reused 6 (delta 0), pack-reused 0
-1:00PM INF cloned https://github.com/ori-edge/all-in-one-opennebula.git to /tmp/github.com/all-in-one-opennebula
-1:00PM WRN git clone: repository https://github.com/ori-edge/k8s_gateway.git already exists in /tmp/github.com/k8s_gateway
+1:00:05 INF cloned https://github.com/ori-edge/all-in-one-opennebula.git to /tmp/github.com/all-in-one-opennebula
+1:00:06 WRN git clone: repository https://github.com/ori-edge/k8s_gateway.git already exists in /tmp/github.com/k8s_gateway
 ```
 
 ### list all repositories

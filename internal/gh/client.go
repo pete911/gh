@@ -37,7 +37,7 @@ func NewClient(ghClient *github.Client, gitClient GitCloner) Client {
 	}
 }
 
-func NewClientWithToken(token string) Client {
+func NewClientWithToken(token string, gitClient GitCloner) Client {
 
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
@@ -46,10 +46,8 @@ func NewClientWithToken(token string) Client {
 	tc := oauth2.NewClient(ctx, ts)
 	tc.Timeout = timeout
 
-	return Client{
-		HasToken: true,
-		token:    token,
-		ghClient: github.NewClient(tc),
-		ctx:      ctx,
-	}
+	client := NewClient(github.NewClient(tc), gitClient)
+	client.HasToken = true
+	client.token = token
+	return client
 }
