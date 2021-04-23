@@ -26,7 +26,6 @@ type Client struct {
 	token     string
 	ghClient  *github.Client
 	gitClient GitCloner
-	ctx       context.Context
 }
 
 func NewClient(gitClient GitCloner) Client {
@@ -34,17 +33,15 @@ func NewClient(gitClient GitCloner) Client {
 	return Client{
 		ghClient:  github.NewClient(&http.Client{Timeout: timeout}),
 		gitClient: gitClient,
-		ctx:       context.Background(),
 	}
 }
 
 func NewClientWithToken(token string, gitClient GitCloner) Client {
 
-	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
 	)
-	tc := oauth2.NewClient(ctx, ts)
+	tc := oauth2.NewClient(context.Background(), ts)
 	tc.Timeout = timeout
 
 	return Client{
@@ -52,6 +49,5 @@ func NewClientWithToken(token string, gitClient GitCloner) Client {
 		token:     token,
 		ghClient:  github.NewClient(tc),
 		gitClient: gitClient,
-		ctx:       ctx,
 	}
 }

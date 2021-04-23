@@ -1,6 +1,7 @@
 package gh
 
 import (
+	"context"
 	"fmt"
 	"github.com/google/go-github/v34/github"
 	"sort"
@@ -81,7 +82,7 @@ func (c Client) listRepositoriesByOrg(org string) ([]*github.Repository, error) 
 
 	var repositories []*github.Repository
 	for {
-		repos, resp, err := c.ghClient.Repositories.ListByOrg(c.ctx, org, opt)
+		repos, resp, err := c.ghClient.Repositories.ListByOrg(context.Background(), org, opt)
 		if err != nil {
 			return nil, fmt.Errorf("list repositories by org page %d: %w", opt.Page, err)
 		}
@@ -102,7 +103,7 @@ func (c Client) listRepositories(user string) ([]*github.Repository, error) {
 
 	var repositories []*github.Repository
 	for {
-		repos, resp, err := c.ghClient.Repositories.List(c.ctx, user, opt)
+		repos, resp, err := c.ghClient.Repositories.List(context.Background(), user, opt)
 		if err != nil {
 			return nil, fmt.Errorf("list repositories page %d: %w", opt.Page, err)
 		}
