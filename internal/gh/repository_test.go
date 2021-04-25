@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -14,13 +15,16 @@ func TestClient_ListRepositoriesByOrg(t *testing.T) {
 
 	t.Run("list repositories by org", func(t *testing.T) {
 
+		response, err := ioutil.ReadFile("testdata/repositories-list.json")
+		require.NoError(t, err)
+
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			if r.RequestURI != "/orgs/octocat/repos?type=sources" {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			w.Header().Set("Content-Type", "application/json")
-			fmt.Fprint(w, repositoriesListResponse)
+			w.Write(response)
 		}
 		server := httptest.NewServer(http.HandlerFunc(handler))
 		defer server.Close()
@@ -58,13 +62,16 @@ func TestClient_ListRepositories(t *testing.T) {
 
 	t.Run("list repositories", func(t *testing.T) {
 
+		response, err := ioutil.ReadFile("testdata/repositories-list.json")
+		require.NoError(t, err)
+
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			if r.RequestURI != "/users/octocat/repos?affiliation=owner" {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			w.Header().Set("Content-Type", "application/json")
-			fmt.Fprint(w, repositoriesListResponse)
+			w.Write(response)
 		}
 		server := httptest.NewServer(http.HandlerFunc(handler))
 		defer server.Close()
