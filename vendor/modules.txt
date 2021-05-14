@@ -84,7 +84,7 @@ github.com/kevinburke/ssh_config
 github.com/mitchellh/go-homedir
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
-# github.com/rs/zerolog v1.21.0
+# github.com/rs/zerolog v1.22.0
 ## explicit
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
@@ -97,12 +97,9 @@ github.com/sergi/go-diff/diffmatchpatch
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
-# github.com/stretchr/objx v0.1.1
-github.com/stretchr/objx
 # github.com/stretchr/testify v1.7.0
 ## explicit
 github.com/stretchr/testify/assert
-github.com/stretchr/testify/mock
 github.com/stretchr/testify/require
 # github.com/xanzy/ssh-agent v0.3.0
 github.com/xanzy/ssh-agent
