@@ -111,7 +111,7 @@ github.com/mattn/go-isatty
 github.com/mitchellh/go-homedir
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
-# github.com/rs/zerolog v1.27.0
+# github.com/rs/zerolog v1.28.0
 ## explicit
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
