@@ -1,9 +1,7 @@
 package cgo
 
-// #include <lib/sha1.h>
-// #include <lib/sha1.c>
-// #include <lib/ubc_check.h>
-// #include <lib/ubc_check.c>
+// #include <sha1.h>
+// #include <ubc_check.h>
 import "C"
 
 import (
@@ -66,4 +64,15 @@ func Sum(data []byte) ([]byte, bool) {
 	d.Write(data)
 
 	return d.sum()
+}
+
+func (d *digest) Write(p []byte) (nn int, err error) {
+	if len(p) == 0 {
+		return 0, nil
+	}
+
+	data := (*C.char)(unsafe.Pointer(&p[0]))
+	C.SHA1DCUpdate(&d.ctx, data, (C.size_t)(len(p)))
+
+	return len(p), nil
 }
