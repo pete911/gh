@@ -1,4 +1,7 @@
 # gh
+
+[![pipeline](https://github.com/pete911/gh/actions/workflows/pipeline.yml/badge.svg)](https://github.com/pete911/gh/actions/workflows/pipeline.yml)
+
 GitHub tools
 
 ## install
@@ -10,7 +13,7 @@ GitHub tools
 
 Project works with public repositories out of the box. To be able to use it with private repositories, create
 [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token)
-on github and export it under `GITHUB_TOKEN` env. variable.
+on GitHub and export it under `GITHUB_TOKEN` env. variable.
 
 ### clone all repositories
 
