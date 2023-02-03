@@ -95,14 +95,18 @@ func (t *Entity) addUserId(name, comment, email string, config *packet.Config, c
 		FlagsValid:        true,
 		FlagSign:          true,
 		FlagCertify:       true,
-		MDC:               true, // true by default, see 5.8 vs. 5.14
-		AEAD:              config.AEAD() != nil,
-		V5Keys:            config != nil && config.V5Keys,
+		SEIPDv1:           true, // true by default, see 5.8 vs. 5.14
+		SEIPDv2:           config.AEAD() != nil,
 	}
 
 	// Set the PreferredHash for the SelfSignature from the packet.Config.
 	// If it is not the must-implement algorithm from rfc4880bis, append that.
-	selfSignature.PreferredHash = []uint8{hashToHashId(config.Hash())}
+	hash, ok := algorithm.HashToHashId(config.Hash())
+	if !ok {
+		return errors.UnsupportedError("unsupported preferred hash function")
+	}
+
+	selfSignature.PreferredHash = []uint8{hash}
 	if config.Hash() != crypto.SHA256 {
 		selfSignature.PreferredHash = append(selfSignature.PreferredHash, hashToHashId(crypto.SHA256))
 	}
@@ -123,9 +127,16 @@ func (t *Entity) addUserId(name, comment, email string, config *packet.Config, c
 	}
 
 	// And for DefaultMode.
-	selfSignature.PreferredAEAD = []uint8{uint8(config.AEAD().Mode())}
-	if config.AEAD().Mode() != packet.AEADModeEAX {
-		selfSignature.PreferredAEAD = append(selfSignature.PreferredAEAD, uint8(packet.AEADModeEAX))
+	modes := []uint8{uint8(config.AEAD().Mode())}
+	if config.AEAD().Mode() != packet.AEADModeOCB {
+		modes = append(modes, uint8(packet.AEADModeOCB))
+	}
+
+	// For preferred (AES256, GCM), we'll generate (AES256, GCM), (AES256, OCB), (AES128, GCM), (AES128, OCB)
+	for _, cipher := range selfSignature.PreferredSymmetric {
+		for _, mode := range modes {
+			selfSignature.PreferredCipherSuites = append(selfSignature.PreferredCipherSuites, [2]uint8{cipher, mode})
+		}
 	}
 
 	// User ID binding signature
