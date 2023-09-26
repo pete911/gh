@@ -1,9 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/pete911/gh/internal/gh"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"os"
 )
 
@@ -24,7 +25,7 @@ func GetPwd() string {
 
 	pwd, err := os.Getwd()
 	if err != nil {
-		log.Warn().Err(err).Msgf("cannot get pwd, setting pwd to %s", defaultPwd)
+		slog.Warn(fmt.Sprintf("setting pwd to %s: %v", defaultPwd, err))
 		return defaultPwd
 	}
 	return pwd

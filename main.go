@@ -2,23 +2,15 @@ package main
 
 import (
 	"github.com/pete911/gh/cmd"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"os"
 )
 
-func init() {
-
-	w := zerolog.ConsoleWriter{
-		Out:        os.Stderr,
-		TimeFormat: "15:04:05",
-	}
-	log.Logger = log.Output(w)
-}
-
 func main() {
 
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, nil)))
 	if err := cmd.RootCmd.Execute(); err != nil {
-		log.Fatal().Err(err)
+		slog.Error(err.Error())
+		os.Exit(1)
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
-	"github.com/rs/zerolog/log"
+	"log/slog"
 	"os"
 	"path/filepath"
 )
@@ -30,7 +30,7 @@ func (c Client) CloneUserRepositories(user, destination string) error {
 
 func (c Client) gitCloneRepositories(repositories Repositories, destination string) error {
 
-	log.Info().Msgf("got %d repositories", len(repositories))
+	slog.Info(fmt.Sprintf("got %d repositories", len(repositories)))
 	for _, repository := range repositories {
 		repositoryDestination := filepath.Join(destination, repository.Name)
 		if err := c.gitCloneRepository(repository.CloneURL, repositoryDestination); err != nil {
@@ -55,12 +55,12 @@ func (c Client) gitCloneRepository(url, destination string) error {
 
 	if err != nil {
 		if errors.Is(err, git.ErrRepositoryAlreadyExists) {
-			log.Warn().Msgf("git clone: repository %s already exists in %s", url, destination)
+			slog.Warn(fmt.Sprintf("git clone: repository %s already exists in %s", url, destination))
 			return nil
 		}
 		return err
 	}
 
-	log.Info().Msgf("cloned %s to %s", url, destination)
+	slog.Info(fmt.Sprintf("cloned %s to %s", url, destination))
 	return nil
 }
