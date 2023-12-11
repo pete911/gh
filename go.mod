@@ -3,7 +3,7 @@ module github.com/pete911/gh
 go 1.21
 
 require (
-	github.com/go-git/go-git/v5 v5.10.1
+	github.com/go-git/go-git/v5 v5.11.0
 	github.com/google/go-github/v34 v34.0.0
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
