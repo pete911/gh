@@ -1,14 +1,14 @@
 module github.com/pete911/gh
 
 go 1.22.0
-toolchain go1.23.1
+toolchain go1.24.1
 
 require (
 	github.com/go-git/go-git/v5 v5.14.0
 	github.com/google/go-github/v34 v34.0.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/oauth2 v0.28.0
+	golang.org/x/oauth2 v0.29.0
 )
 
 require (
