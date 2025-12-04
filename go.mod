@@ -7,7 +7,7 @@ toolchain go1.24.1
 require (
 	github.com/go-git/go-git/v5 v5.16.4
 	github.com/google/go-github/v34 v34.0.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/oauth2 v0.33.0
 )
